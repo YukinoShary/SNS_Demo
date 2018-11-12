@@ -1,0 +1,29 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Frame Name="main" Padding="200,0,0,0"/>
+        <ListView Name="messageList" SelectionMode="Single" SelectionChanged="messageList_SelectionChanged" Grid.Column="0" BorderBrush="Black" >
+            <ListViewItem Name="All" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Name="ALLname" Text="All"  FontSize="18" Grid.Column="0"/>
+                    <TextBlock Name="ALLCount" Margin="0,5,5,5" FontSize="16" Width="20" Grid.Column="1"/>
+                </Grid>
+            </ListViewItem>
+        </ListView>
+        <Button Height="30" VerticalAlignment="Bottom" Content="添加新联系人/群组" Name="NewChat" Click="NewChat_Click"/>
+    </Grid>
+</Window>

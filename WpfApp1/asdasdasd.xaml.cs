@@ -45,17 +45,17 @@ namespace WpfApp1
         private void ShowContent()
         {
             Thickness t = new Thickness(10, 10, 0, 0);
-            StackPanel sp;
+            StackPanel sp = new StackPanel();
             if (rl.Count == 0)
                 return;
             for (int i=0; i<=rl.Count-1; i++)
             {
-                sp = new StackPanel();
-                sp.Margin = t;
                 //当前消息为列表第一项或上一条消息不是同一个人发出时标出发送者
                 if (i==0||!rl[--i].Source.Equals(rl[i].Source))
                 {
-                    if(rl[i].Type.Equals("Text"))                         //文字输出处理
+                    sp = new StackPanel();
+                    sp.Margin = t;
+                    if (rl[i].Type.Equals("Text"))                         //文字输出处理
                     {
                         TextBlock tb = new TextBlock();
                         tb.Text = rl[i].Content;
@@ -137,6 +137,7 @@ namespace WpfApp1
                     string s = TransmissionData.DataPackaging(content, ID.Text, "Text");
                     await UDP_Util.UdpSend(s);
                 });
+                input.Text = "";
             }
         }
 

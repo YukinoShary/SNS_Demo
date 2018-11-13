@@ -11,7 +11,7 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-        <Frame Name="main" Padding="200,0,0,0"/>
+        <Frame Name="main" Grid.Column="1"/>
         <ListView Name="messageList" SelectionMode="Single" SelectionChanged="messageList_SelectionChanged" Grid.Column="0" BorderBrush="Black" >
             <ListViewItem Name="All" >
                 <Grid>

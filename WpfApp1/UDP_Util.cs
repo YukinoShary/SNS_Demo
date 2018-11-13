@@ -18,7 +18,7 @@ namespace WpfApp1
         //https://blog.csdn.net/Andrewniu/article/details/72469023
 
         private static IPAddress ip = IPAddress.Parse("127.0.0.1");
-        private static IPEndPoint point = new IPEndPoint(ip,10086);
+        private static IPEndPoint point = new IPEndPoint(ip,18888);
         private static int receiveBufferSize = 1470;   // buffer size to use for each socket I/O operation 
         private static Socket receiveSocket;
         private static SocketAsyncEventArgs readWriteEventArg;
@@ -40,7 +40,11 @@ namespace WpfApp1
         {
             try
             {
-                UdpClient udpclient = new UdpClient(point);
+                UdpClient udpclient = new UdpClient();
+                Socket sc = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                sc.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+                sc.Bind(point);
+                udpclient.Client = sc;
                 byte[] sendBytes = Encoding.UTF8.GetBytes(result);
                 ICollection<UdpPacket>udpPackets = UdpSplit(sendBytes, 1470);
                 foreach(var udpPacket in udpPackets)
@@ -94,7 +98,8 @@ namespace WpfApp1
             readWritePool = new SocketAsyncEventArgsPool(numConnections);
 
             receiveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            receiveSocket.Bind(point);
+            receiveSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+            receiveSocket.Bind(point);           
             receiveSocket.Listen(numConnections);
 
             Init();

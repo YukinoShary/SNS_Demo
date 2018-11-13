@@ -14,7 +14,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="45"/>
                 <RowDefinition Height="3*"/>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
             <TextBlock FontSize="16" Name="ID" Margin="20,10,10,10" HorizontalAlignment="Left" Width="250"/>
             <Button Name="newchat"  HorizontalAlignment="Right" Width="40" Margin="10,10,20,10" Content="&#xE109;" FontSize="16" FontFamily="Segoe UI Symbol" />
@@ -24,8 +24,8 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Name="input" Height="100"  VerticalAlignment="Top" DragEnter="input_DragEnter"/>
-                <Button Name="send" Grid.Column="2" HorizontalAlignment="Right" FontFamily="Segoe MDL2 Assets" Width="60" Height="100"  FontSize="30" Content="&#xEA63;" Click="send_Click"/>
+                <TextBox Name="input" Height="70"  VerticalAlignment="Top" DragEnter="input_DragEnter"/>
+                <Button Name="send" Grid.Column="2" HorizontalAlignment="Right" FontFamily="Segoe MDL2 Assets" Width="60" Height="70"  FontSize="30" Content="&#xEA63;" Click="send_Click"/>
             </Grid>
         </Grid>
     </Grid>

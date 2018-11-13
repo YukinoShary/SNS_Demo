@@ -34,12 +34,12 @@ namespace WpfApp1
 
             navigateTable.Add("All", new List<asdasdasd.Receive>());
             listContent.Add("All", CreatItem("All", 0));
-            HelloWord();
 
             Task.Run(async () =>
             {
                 await UDP_Util.UdpSocket();
             });
+            HelloWord();
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace WpfApp1
             //事件触发导航至聊天页同时传递聊天内容
             ListViewItem selected = (ListViewItem)messageList.SelectedItem;
             asdasdasd page = new asdasdasd(selected.Name, navigateTable[selected.Name]);
-            main.Navigate(page);
+            main.Navigate(page); 
         }
 
 

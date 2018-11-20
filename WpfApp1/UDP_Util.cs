@@ -54,9 +54,9 @@ namespace WpfApp1
                 foreach(var udpPacket in udpPackets)
                 {
                     byte[] ready2Send = Serialize(udpPacket);
-                    Encoding.UTF8.GetBytes(BitConverter.ToString(ready2Send));
+                    //Encoding.UTF8.GetBytes(BitConverter.ToString(ready2Send));
                     string debug = BitConverter.ToString(ready2Send);
-                    udpclient.Send(ready2Send, ready2Send.Length, point);
+                    udpclient.SendAsync(ready2Send, ready2Send.Length, point);
                 }
                 
                 udpclient.Close();

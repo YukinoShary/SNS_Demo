@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -10,16 +11,16 @@ namespace WpfApp1
 {
     class MessagePush
     {
-        public static Dictionary<string, int> messageCounters;         //每个聊天对象的未读消息数
+        private static Dictionary<string,int> messageCounters;         //每个聊天对象的未读消息数
         private static int bufferCount = 0;
         private static string SaveFileDirectory = "d:\\example"+TransmissionData.Getuuid()+"\\fil";
         private static string SavePicDirectory = "d:\\example"+TransmissionData.Getuuid()+"\\pic";
-        private readonly object countersLock=new object ();
+        private static readonly object countersLock=new object ();
 
         MessagePush()
         {
-            Dictionary.CreateDirectory(SaveFileDirectory);
-            Dictionary.CreateDirectory(SavePicDirectory);
+            Directory.CreateDirectory(SaveFileDirectory);
+            Directory.CreateDirectory(SavePicDirectory);
         }
 
         /// <summary>
@@ -56,13 +57,13 @@ namespace WpfApp1
                 if (MainWindow.mw.messageList.Items.IndexOf(source) == 0)      //若来源客户端的聊天项已存在
                 {
                     //对象的未读消息+1
-                    Interlocked.Increment(ref messageCounters[source]);
-                    MainWindow.mw.Dispatcher.Invoke(()=>{ItemCountAdd(source,messageCounters[source]);});
+                    messageCounters[source] += 1;
+                    MainWindow.mw.ItemCountAdd(source,messageCounters[source]);
                 }
                 else
                 {
                     messageCounters.Add(source, 1);
-                    MainWindow.mw.Dispatcher.Invoke(()=>{NewItemAdd(source);});
+                    MainWindow.mw.NewItemAdd(source);
                 }
             }
             
@@ -81,7 +82,7 @@ namespace WpfApp1
                 receive.Content = SaveToLocal(content, type);
             }
 
-            MainWindow.mw.Dispatcher.Invoke(()=>{navigateTable[source].Add(receive);});
+            MainWindow.mw.navigateTableUpdate(receive, source);
         }
         
         /// <summary>
@@ -94,12 +95,11 @@ namespace WpfApp1
         private static void GroupMessage(string type, string source, string content,string target)
         {
             //对象群组的未读消息+1
-            Interlocked.Increment(ref messageCounters[source]);
-            MainWindow.mw.Dispatcher.Invoke(() =>
+            lock(countersLock)
             {
-                TextBlock text = (TextBlock)MainWindow.mw.FindName(target+"Count");
-                text = messageCounters[target].ToString();
-            });
+                messageCounters[target] += 1;
+            }            
+            MainWindow.mw.ItemCountAdd(target, messageCounters[target]);
 
             //新消息内容封装入链表
             asdasdasd.Receive r = new asdasdasd.Receive();
@@ -114,7 +114,7 @@ namespace WpfApp1
                 r.Content = SaveToLocal(content, type);    
             }
             r.Type = type;
-            MainWindow.mw.Dispatcher.Invoke(()=>{navigateTable[target].Add(r);});
+            MainWindow.mw.navigateTableUpdate(r, target);
         }
                 
         /// <summary>
@@ -134,5 +134,13 @@ namespace WpfApp1
             }
         }
 
+        /// <summary>
+        /// counter计数器新项目
+        /// </summary>
+        /// <param name="itemName"></param>
+        public static void newCounter(string itemName)
+        {
+            messageCounters.Add(itemName, 0);
+        }
     }
 }

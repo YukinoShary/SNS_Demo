@@ -11,7 +11,7 @@ namespace WpfApp1
 {
     class MessagePush
     {
-        private static Dictionary<string,int> messageCounters;         //每个聊天对象的未读消息数
+        private static Dictionary<string, int> messageCounters = new Dictionary<string, int>();       //每个聊天对象的未读消息数
         private static int bufferCount = 0;
         private static string SaveFileDirectory = "d:\\example"+TransmissionData.Getuuid()+"\\fil";
         private static string SavePicDirectory = "d:\\example"+TransmissionData.Getuuid()+"\\pic";

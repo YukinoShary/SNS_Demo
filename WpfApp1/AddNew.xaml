@@ -5,15 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="AddNew" Height="300" Width="400">
+        Title="AddNew" Height="250" Width="400">
     <Grid>
         <StackPanel>
             <RadioButton Name="AddContact" GroupName="mode" Margin="30,30,0,0" FontSize="15" Content="建立新联系人" IsChecked="True"/>
             <RadioButton Name="AddGroup" GroupName="mode" Margin="30,10,0,0" FontSize="15" Content="建立新群组"/>
             <TextBlock Text="请输入对方客户端的uuid或是新建群组名字" Margin="30,10,0,0" FontSize="15"/>
             <TextBox Name="ChatName" Margin="20,10,0,0" Height="30" Width="350" HorizontalAlignment="Left"/>
-            <TextBlock Text="请输入接收端口号" FontSize="15" Margin="30,10,0,0"/>
-            <TextBox Name="Port" Width="350" Height="30" Margin="0,10,0,0"/>
             <StackPanel Orientation="Horizontal">
                 <Button Name="confirm" Content="确定" Margin="60,20,0,0"  Height="30" Width="50" HorizontalAlignment="Left" Click="confirm_Click"/>
                 <Button Name="cancel" Content="取消" Margin="180,20,0,0" Height="30" Width="50" HorizontalAlignment="Right" Click="cancel_Click"/>

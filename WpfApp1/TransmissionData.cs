@@ -11,6 +11,14 @@ namespace WpfApp1
     {
         private static string uuid = "";
 
+        internal MessagePush MessagePush
+        {
+            get => default(MessagePush);
+            set
+            {
+            }
+        }
+
         /// <summary>
         /// 初始化程序的uuid
         /// </summary>

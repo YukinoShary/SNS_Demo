@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfApp1
 {
+    [Serializable]
     class UdpPacket
     {
         public string Sequence { get; set; }

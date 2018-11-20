@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +32,8 @@ namespace WpfApp1
 
         private static int numConnections = 5;  // the maximum number of connections the sample is designed to handle simultaneously 
         private static Semaphore maxNumberAcceptedClients;
-        
+
+
 
 
         /// <summary>
@@ -49,8 +53,10 @@ namespace WpfApp1
                 ICollection<UdpPacket>udpPackets = UdpSplit(sendBytes, 1470);
                 foreach(var udpPacket in udpPackets)
                 {
-                    byte[] ready2Send = Encoding.UTF8.GetBytes(udpPacket.ToString());
-                    await udpclient.SendAsync(ready2Send, ready2Send.Length, point);
+                    byte[] ready2Send = Serialize(udpPacket);
+                    Encoding.UTF8.GetBytes(BitConverter.ToString(ready2Send));
+                    string debug = BitConverter.ToString(ready2Send);
+                    udpclient.Send(ready2Send, ready2Send.Length, point);
                 }
                 
                 udpclient.Close();
@@ -100,7 +106,7 @@ namespace WpfApp1
             receiveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             receiveSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
             receiveSocket.Bind(point);           
-            receiveSocket.Listen(numConnections);
+            //receiveSocket.Listen(numConnections);
 
             Init();
             StartReceive();
@@ -169,8 +175,11 @@ namespace WpfApp1
                 {
                     byte[] receive = new byte[receiveBufferSize];                                    //以太网单个数据帧最大为1472
                     Interlocked.Add(ref totalBytesRead, e.BytesTransferred);
-                    e.SetBuffer(receive, 0, receive.Length);    
-                    PacketHandle(receive);
+                    e.SetBuffer(receive, 0, receive.Length); 
+                    if(e.Count!=0)
+                    {
+                        PacketHandle(receive);
+                    }                   
                 }
                 catch (Exception ex)
                 {
@@ -186,7 +195,7 @@ namespace WpfApp1
         /// <param name="receiveByte"></param>
         private static void PacketHandle(byte[] receiveByte)
         {
-            if (receiveByte.Length != Marshal.SizeOf(typeof(UdpClient)))
+            /*if (receiveByte.Length != Marshal.SizeOf(typeof(UdpPacket)))
             {
                 throw new ArgumentException("receiveByte参数与UdpPacket参数字节长度不一致");
             }
@@ -197,9 +206,11 @@ namespace WpfApp1
             {
                 Marshal.WriteByte(bufferHandler, index, receiveByte[index]);
             }
-            UdpPacket Packet = (UdpPacket)Marshal.PtrToStructure(bufferHandler, typeof(UdpPacket));
-            Marshal.FreeHGlobal(bufferHandler);
+            UdpPacket Packet = (UdpPacket)Marshal.PtrToStructure<UdpPacket>(bufferHandler);
+            Marshal.FreeHGlobal(bufferHandler);*/
 
+            string s = Encoding.UTF8.GetString(receiveByte);
+            UdpPacket Packet = Deserialize(Encoding.Default.GetBytes(s));
             //判断Udp数据文件是否完整
             if(Packet.Amount == 1)
             {
@@ -207,7 +218,7 @@ namespace WpfApp1
             }
             else
             {
-                if(receivePackets[Packet.Sequence]==null)
+                if(receivePackets.ContainsKey(Packet.Sequence))
                 {
                     receivePackets.Add(Packet.Sequence, new List<UdpPacket>());            //当接收到数据包集合的第一个包时建立新的链表      
                 }
@@ -258,6 +269,28 @@ namespace WpfApp1
             return packets;
         }
 
+        private static byte[] Serialize(UdpPacket p)
+        {
+            byte[] buff;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(ms, p);
+                buff = ms.ToArray();
+                return buff;
+            }
+        }
 
+        private static UdpPacket Deserialize(byte[] b)
+        {
+            UdpPacket p;
+            using (MemoryStream ms = new MemoryStream(b))
+            {
+                IFormatter formatter = new BinaryFormatter();
+                ms.Position = 0;
+                p = (UdpPacket)formatter.Deserialize(ms);
+            }
+            return p;
+        }
     }
 }
